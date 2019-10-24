@@ -11,6 +11,27 @@
  * and limitations under the License.
  */
 
-import { Linking } from 'react-native';
+import { Linking, Platform } from 'react-native';
 
-export const launchUri = url => Linking.openURL(url);
+// export const launchUri = url => Linking.openURL(url);
+// Object.defineProperty(exports, '__esModule', { value: true });
+// var react_native_1 = require('react-native');
+var safariView = require('react-native-safari-view');
+
+export const launchUri = url => {
+	if (Platform.OS == 'ios') {
+		return safariView.default
+			.isAvailable()
+			.then(
+				safariView.default.show({
+					url: url,
+				})
+			)
+			.catch(error => {
+				Linking.openURL(url);
+				// Fallback WebView code for iOS 8 and earlier
+			});
+	} else {
+		return Linking.openURL(url);
+	}
+};
